@@ -17,7 +17,7 @@ Usage
 Include AngularJS, the build (e.g., `caretaware.min.js`), and the `leodido.caretAware` AngularJS module.
 
 ```html
-<input type="text" name="myCursorField" data-caret-aware="cursor"/>
+<input type="text" name="myCursorField" caret-aware="cursor"/>
 ```
 
 Parent scope will contain a `cursor` variable tracking the caret position of input named `myCursorField`.
