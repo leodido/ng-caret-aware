@@ -1,0 +1,31 @@
+{
+  "name": "caret-aware",
+  "version": "0.1.0",
+  "authors": [
+    "Leo Di Donato <leodidonato@gmail.com>"
+  ],
+  "main": "lib/caretaware.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "coverage"
+  ],
+  "dependencies": {
+    "angular": "~1.3.0",
+    "closure-library": "google/closure-library",
+    "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
+    "closure-angularjs-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/angular-1.3.js",
+    "closure-w3c-dom1-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/externs/w3c_dom1.js",
+    "closure-ie-dom-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/externs/ie_dom.js",
+    "closure-w3c-dom2-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/externs/w3c_dom2.js",
+    "closure-gecko-dom-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/externs/gecko_dom.js",
+    "closure-window-externs": "https://raw.githubusercontent.com/google/closure-compiler/master/externs/window.js"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.3.0"
+  }
+}

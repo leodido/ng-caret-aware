@@ -1,0 +1,17 @@
+{
+  "globalstrict": true,
+  "expr": true,
+  "globals": {
+    "document": false,
+    "console": false,
+    "angular": false,
+    "goog": false,
+    "jasmine": false,
+    "describe": false,
+    "it": false,
+    "beforeEach": false,
+    "expect": false,
+    "require": false,
+    "leodido": false
+  }
+}
