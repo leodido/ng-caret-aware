@@ -17,7 +17,6 @@
   "devDependencies": {
     "bower": "~1.3.12",
     "del": "^1.0.0",
-    "minimist": "~1.1.0",
     "gulp": "~3.8.10",
     "gulp-closure-compiler": "~0.2.10",
     "gulp-help": "^1.3.1",
@@ -29,10 +28,14 @@
     "karma-coverage": "~0.2.6",
     "karma-firefox-launcher": "~0.1.3",
     "karma-jasmine": "~0.3.1",
-    "karma-phantomjs-launcher": "~0.1.4"
+    "karma-phantomjs-launcher": "~0.1.4",
+    "minimist": "~1.1.0",
+    "run-sequence": "^1.0.2"
   },
   "scripts": {
-    "postinstall": "./node_modules/.bin/bower install"
+    "postinstall": "./node_modules/.bin/bower install",
+    "production": "./node_modules/.bin/gulp build --env production --banner",
+    "development": "./node_modules/.bin/gulp build --env development --banner"
   },
   "keywords": [
     "caret",

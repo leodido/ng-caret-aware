@@ -6,6 +6,7 @@ var gulp = require('gulp'),
   gutil = require('gulp-util'),
   del = require('del'),
   beautify = require('gulp-jsbeautifier'),
+  sequence = require('run-sequence'),
   pack = require('./package.json'),
   banner = [
     '/**',
@@ -21,11 +22,13 @@ gulp = gulp = require('gulp-help')(gulp, {
 });
 
 var knownFlags = {
+    'boolean': ['banner'],
     'string': ['env'],
     'default': {
-      env: process.env.NODE_ENV || 'production'
+      env: process.env.NODE_ENV || 'production',
+      banner: false
     },
-    'alias': { e: 'env' }
+    'alias': { e: 'env', b: 'banner' }
   },
   flags = minimist(process.argv.slice(2), knownFlags),
   productionBuild = function(value) {
@@ -80,7 +83,7 @@ gulp.task('beauty', false, [], function() {
         define: [
             'leodido.constants.DEBUG=' + (productionBuild(flags.env) ? 'false' : 'true')
         ],
-        output_wrapper: banner + '\n(function(){%output%})();'
+        output_wrapper: (flags.banner ? banner + '\n': '') + '(function(){%output%})();'
       }
     }))
     .pipe(beautify({ config: './.jsbeautifyrc' }))
@@ -89,7 +92,7 @@ gulp.task('beauty', false, [], function() {
 
 // closure_entry_point: 'leodido.directive.CaretAwareModule',
 // only_closure_dependencies: true,
-gulp.task('compile', 'Compile library', [], function() {
+gulp.task('compile', false, [], function() {
   gulp.src(pack.directories.lib + '/*.js')
     .pipe(comp({
       compilerPath: build.compiler,
@@ -105,26 +108,27 @@ gulp.task('compile', 'Compile library', [], function() {
         define: [
           'leodido.constants.DEBUG=' + (productionBuild(flags.env) ? 'false' : 'true')
         ],
-        output_wrapper: banner + '\n(function(){%output%})();'
+        output_wrapper: (flags.banner ? banner + '\n': '') + '(function(){%output%})();'
       }
     }))
     .pipe(gulp.dest(build.directory));
-}, {
-  options: {
-    'env=production|development': 'Kind of build to perform, defaults to production'
-  }
 });
 
 gulp.task('clean', 'Clean build directory', function(cb) {
   del(build.directory, cb);
 });
 
+gulp.task('build', 'Build the library', [], function(cb) {
+  sequence(['clean', 'lint'], (productionBuild(flags.env) ? 'compile' : ['beauty', 'compile']), cb);
+}, {
+  options: {
+    'env=production|development': 'Kind of build to perform, defaults to production',
+    'banner': 'Prepend banner to the built file'
+  }
+});
+
 gulp.task('default', false, ['help']);
 
-// HANDLE ENV
-// IF PROD:
-// 1) DEBUG=false
-// 2) include formatting: 'PRETTY_PRINT' flag
-
-// DEV: BEAUTY, NO MIN, DEBUG TRUE,
-// PROD: BEAUTY, MIN, DEBUG FALSE, SOURCE MAP, BEAUTIFIED
+// TODO
+// [ ] - source map
+// [ ] - better beautified release file
