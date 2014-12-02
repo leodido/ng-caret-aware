@@ -1,3 +1,71 @@
-(function(){function d(){}
-d.prototype.controller=function(a,g,h){var b=g[0],c,e=this;e.a=function(){return c};e.c=function(f){if(b.createTextRange){var c=b.createTextRange();c.move('character',f);c.select()}else angular.isDefined(b.selectionStart)&&b.setSelectionRange(f,f);a[e.a()]=f};e.b=function(){if('selectionStart'in b)return b.selectionStart;if(document.selection){var a=document.selection.createRange(),c=document.selection.createRange().text.length;a.moveStart('character',-b.value.length);return a.text.length-c}};c=h.caretAware||
-'caret';a[c]=0};d.prototype.controller.$inject=['$scope','$element','$attrs'];d.prototype.link=function(a,g,h,b){g.bind('keydown keyup click',function(){a.$apply(function(){a[b.a()]=b.b()})});a.$watch(function(){return a[b.a()]},function(a){b.c(~~a)})};angular.module('leodido.caretAware',[]).directive('caretAware',function(){var a=new d;return{restrict:'A',controller:a.controller,link:a.link}});})();
+/**
+ * Copyright (c) 2014, Leo Di Donato <leodidonato@gmail.com>
+ * ng-caret-aware.js - AngularJS directive for caret aware elements
+ * @version v0.1.0
+ * @link http://github.com/leodido/ng-caret-aware
+ * @license MIT
+ */
+(function () {
+  'use strict';
+  var leodido = {
+    constants: {}
+  };
+  leodido.constants.DEBUG = !1;
+  leodido.constants.CARETAWARE_DIRECTIVE_NAME = 'caretAware';
+  leodido.constants.CARETWARE_DEFAULT_CARET_VARNAME = 'caret';
+  leodido.directive = {};
+  leodido.directive.CaretAware = function () {};
+  leodido.directive.CaretAware.prototype.controller = function (a, f, g) {
+    var b = f[0],
+      c, d = this;
+    d.getNamespace = function () {
+      return c;
+    };
+    d.setPosition = function (e) {
+      if (b.createTextRange) {
+        var c = b.createTextRange();
+        c.move('character', e);
+        c.select();
+      } else {
+        angular.isDefined(b.selectionStart) && b.setSelectionRange(e, e);
+      }
+      a[d.getNamespace()] = e;
+    };
+    d.getPosition = function () {
+      if ('selectionStart' in b) {
+        return b.selectionStart;
+      }
+      if (document.selection) {
+        var a = document.selection.createRange(),
+          c = document.selection.createRange().text.length;
+        a.moveStart('character', -b.value.length);
+        return a.text.length - c;
+      }
+    };
+    c = g[leodido.constants.CARETAWARE_DIRECTIVE_NAME] || leodido.constants.CARETWARE_DEFAULT_CARET_VARNAME;
+    a[c] = 0;
+  };
+  leodido.directive.CaretAware.prototype.controller.$inject = ['$scope', '$element', '$attrs'];
+  leodido.directive.CaretAware.prototype.link = function (a, f, g, b) {
+    f.bind('keydown keyup click', function () {
+      a.$apply(function () {
+        a[b.getNamespace()] = b.getPosition();
+      });
+    });
+    a.$watch(function () {
+      return a[b.getNamespace()];
+    }, function (a) {
+      b.setPosition(~~a);
+    });
+  };
+  leodido.directive.CaretAwareFactory = function () {
+    var a = new leodido.directive.CaretAware;
+    return {
+      restrict: 'A',
+      controller: a.controller,
+      link: a.link
+    };
+  };
+  angular.module('leodido.caretAware', []).directive(leodido.constants.CARETAWARE_DIRECTIVE_NAME, leodido.directive
+    .CaretAwareFactory);
+})();

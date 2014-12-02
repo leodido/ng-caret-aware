@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>AngularJS seed for Google Closure Compiler</title>
+</head>
+<body ng-app="app">
+  <div ng-controller="CursorController">
+    <input type="text" name="prova" data-caret-aware="cursor"/>
+    <hr/>
+    <textarea name="ta" id="ta" cols="30" rows="10" data-caret-aware></textarea>
+  </div>
+
+  <script src="../bower_components/angular/angular.js"></script>
+  <script src="../dist/caretaware.min.js"></script>
+  <script>
+    angular.module('app', ['leodido.caretAware'])
+      .controller('CursorController', ['$scope', function($scope) {
+        $scope.$watch('cursor', function(cursor) {
+          console.log('Position of caret named "cursor" (input element) changed: '+ cursor);
+        });
+        $scope.$watch('caret', function(caret) {
+          console.log('Position of caret named "caret" (textarea element) changed: '+ caret);
+        });
+      }]);
+  </script>
+</body>
+</html>

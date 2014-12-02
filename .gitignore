@@ -1,3 +1,7 @@
+# General
+/coverage
+*.log
+
 # Node
 /node_modules
 
@@ -6,7 +10,3 @@
 
 # IDEs
 /.idea
-
-# Other
-/coverage
-*.log

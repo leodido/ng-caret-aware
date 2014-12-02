@@ -12,6 +12,8 @@
     "beforeEach": false,
     "expect": false,
     "require": false,
+    "process": false,
+    "__dirname": false,
     "leodido": false
   }
 }
