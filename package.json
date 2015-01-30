@@ -43,7 +43,8 @@
     "input",
     "textarea",
     "angular",
-    "closure"
+    "closure",
+    "gulp"
   ],
   "directories": {
     "lib": "./lib",
