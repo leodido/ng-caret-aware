@@ -1,6 +1,8 @@
 Caret aware
 ===========
 
+[![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)]()
+
 AngularJS directive for caret aware elements.
 
 Put it on your HTML input elements and it will track the caret (i.e. cursor) exporting its position in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
@@ -37,15 +39,19 @@ See [example](/example) directory for furhter details.
 Install
 -------
 
-To install locally:
+Install it via `bower`.
+
+```
+bower install ng-caret-aware
+```
+
+Or, you can clone this repo and install it locally (you will need `npm`, of course).
 
 ```
 $ git clone git@github.com:leodido/ng-caret-aware.git
 $ cd ng-caret-aware/
 $ npm install
 ```
-
-At the moment this module has not yet been published. Once test suite will be prepared and completed it will be published on online registries.
 
 Build
 -----
