@@ -1,9 +1,9 @@
-Caret aware
-===========
+Caret aware inputs
+==================
 
 [![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)]()
 
-AngularJS directive for caret aware elements.
+**AngularJS directive for caret aware elements**.
 
 Put it on your HTML input elements and it will track the caret (i.e. cursor) exporting its position in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
 
@@ -34,7 +34,7 @@ Parent scope will contain a `caret` (the default name) variable tracking the car
 
 #### Note
 
-See [example](/example) directory for furhter details.
+See [example](/example) directory for further details.
 
 Install
 -------
