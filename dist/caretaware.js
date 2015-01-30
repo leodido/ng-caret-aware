@@ -65,6 +65,7 @@
     var a = new leodido.directive.CaretAware;
     return {
       restrict: 'A',
+      require: leodido.constants.CARETAWARE_DIRECTIVE_NAME,
       controller: a.controller,
       link: a.link
     };
