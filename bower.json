@@ -1,10 +1,10 @@
 {
   "name": "ng-caret-aware",
-  "version": "v0.1.0",
+  "version": "v0.1.1",
   "authors": [
     "Leo Di Donato <leodidonato@gmail.com> (http://git.io/leodido)"
   ],
-  "main": "lib/main.js",
+  "main": "dist/caretaware.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
@@ -12,7 +12,11 @@
     "bower_components",
     "test",
     "coverage",
-    "example"
+    "example",
+    "gulpfile.js",
+    "bower.json",
+    "package.json",
+    "lib"
   ],
   "dependencies": {
     "angular": "~1.3.0",
