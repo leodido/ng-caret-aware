@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2015, Leo Di Donato <leodidonato@gmail.com>
  * ng-caret-aware.js - AngularJS directive for caret aware elements
- * @version v0.1.1
+ * @version v0.1.2
  * @link http://github.com/leodido/ng-caret-aware
  * @license MIT
  */

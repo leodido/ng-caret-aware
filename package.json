@@ -1,6 +1,6 @@
 {
   "name": "ng-caret-aware",
-  "version": "v0.1.1",
+  "version": "v0.1.2",
   "description": "AngularJS directive for caret aware elements",
   "main": "dist/caretaware.js",
   "author": {
