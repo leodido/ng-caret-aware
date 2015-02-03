@@ -15,21 +15,19 @@
   leodido.constants.CARETWARE_DEFAULT_CARET_VARNAME = 'caret';
   leodido.directive = {};
   leodido.directive.CaretAware = function () {};
-  leodido.directive.CaretAware.prototype.controller = function (a, f, h, c) {
+  leodido.directive.CaretAware.prototype.controller = function (a, f, g) {
     var b = f[0],
-      g, d = this;
+      c, d = this;
     d.getNamespace = function () {
-      return g;
+      return c;
     };
     d.setPosition = function (e) {
       if (b.createTextRange) {
-        var k = b.createTextRange();
-        k.move('character', e);
-        k.select();
+        var c = b.createTextRange();
+        c.move('character', e);
+        c.select();
       } else {
-        c(function () {
-          b.focus();
-        }, 0, !1), angular.isDefined(b.selectionStart) && b.setSelectionRange(e, e);
+        angular.isDefined(b.selectionStart) && b.setSelectionRange(e, e);
       }
       a[d.getNamespace()] = e;
     };
@@ -38,27 +36,26 @@
         return b.selectionStart;
       }
       if (document.selection) {
-        b.focus();
         var a = document.selection.createRange(),
           c = document.selection.createRange().text.length;
         a.moveStart('character', -b.value.length);
         return a.text.length - c;
       }
     };
-    g = h[leodido.constants.CARETAWARE_DIRECTIVE_NAME] || leodido.constants.CARETWARE_DEFAULT_CARET_VARNAME;
-    a[g] = 0;
+    c = g[leodido.constants.CARETAWARE_DIRECTIVE_NAME] || leodido.constants.CARETWARE_DEFAULT_CARET_VARNAME;
+    a[c] = 0;
   };
-  leodido.directive.CaretAware.prototype.controller.$inject = ['$scope', '$element', '$attrs', '$timeout'];
-  leodido.directive.CaretAware.prototype.link = function (a, f, h, c) {
+  leodido.directive.CaretAware.prototype.controller.$inject = ['$scope', '$element', '$attrs'];
+  leodido.directive.CaretAware.prototype.link = function (a, f, g, b) {
     f.bind('keydown keyup click', function () {
       a.$apply(function () {
-        a[c.getNamespace()] = c.getPosition();
+        a[b.getNamespace()] = b.getPosition();
       });
     });
     a.$watch(function () {
-      return a[c.getNamespace()];
+      return a[b.getNamespace()];
     }, function (a) {
-      c.setPosition(~~a);
+      b.setPosition(~~a);
     });
   };
   leodido.directive.CaretAwareFactory = function () {
