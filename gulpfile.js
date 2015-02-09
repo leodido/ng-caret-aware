@@ -7,6 +7,7 @@ var gulp = require('gulp'),
   del = require('del'),
   beautify = require('gulp-jsbeautifier'),
   sequence = require('run-sequence'),
+  connect = require('gulp-connect'),
   pack = require('./package.json'),
   banner = [
     '/**',
@@ -125,6 +126,13 @@ gulp.task('build', 'Build the library', [], function(cb) {
     'env=production|development': 'Kind of build to perform, defaults to production',
     'banner': 'Prepend banner to the built file'
   }
+});
+
+gulp.task('connect', function () {
+  connect.server({
+    port: 8000,
+    livereload: true
+  });
 });
 
 gulp.task('default', false, ['help']);
