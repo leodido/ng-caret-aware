@@ -90,7 +90,7 @@ Need help? Run `gulp help` !
 Aknowledgements
 ---------------
 
-* Thanks to [@leogr](http://github.com/leogr) for his suggestions, and improvements. Particularly for his help in fixing issue [#14](https://github.com/leodido/ng-caret-aware/issues/14).
+* Thanks to [@leogr](http://github.com/leogr) for his suggestions, and improvements. Particularly for his help fixing issue [#14](https://github.com/leodido/ng-caret-aware/issues/14).
 
 * Thanks for the inspiration to all authors of snippets (that are present on the web) related to the caret management.
 
