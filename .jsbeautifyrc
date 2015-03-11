@@ -2,6 +2,5 @@
 	"indent_char": " ",
 	"indent_size": 2,
 	"preserve_newlines": false,
-	"jslint_happy": true,
-	"wrap_line_length": 110
+	"wrap_line_length": 80
 }

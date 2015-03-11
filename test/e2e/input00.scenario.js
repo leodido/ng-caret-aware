@@ -3,7 +3,7 @@ describe(
   'input with named caret',
   function () {
     'use strict';
-    it('should stocazzo', function () {
+    it('should ..', function () {
 
       browser.get('example/input00.html');
       var text = 'ciao';
