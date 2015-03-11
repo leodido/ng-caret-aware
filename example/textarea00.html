@@ -1,24 +1,62 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Angular caret aware elements</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Angular caret aware elements - TextArea example 01</title>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../dev.caretaware.min.js"></script>
 </head>
-<body ng-app="app">
-  <div ng-controller="CursorController">
-    <textarea name="ta1" id="ta1" cols="30" rows="10" data-caret-aware></textarea>
-  </div>
+<body ng-app="app" ng-controller="AppController">
 
-  <script src="../bower_components/angular/angular.js"></script>
-  <script src="../dist/caretaware.min.js"></script>
+  <button ng-click="insStringAt('b', 2)">Insert "b" at 2</button>
+  <hr/>
+
+  <label for="area"><strong>Text area</strong></label><br/>
+  <textarea name="textarea" id="area" cols="30" rows="10" data-caret-aware="cursor">a
+
+  z</textarea>
+  <hr/>
+
+  <label for="position"><strong>Position</strong></label><br/>
+  <input type="number" id="position" ng-model="position"/>
+  <button ng-click="cursor = cursor + 1"><b>+</b></button>
+  <button ng-click="cursor = cursor - 1"><b>&ndash;</b></button>
+  <hr/>
+
+
   <script>
-    angular.module('app', ['leodido.caretAware'])
-      .controller('CursorController', ['$scope', function($scope) {
-        $scope.$watch('caret', function(caret) {
-          console.log('Position of caret named "caret" (textarea element) changed: '+ caret);
-        });
-      }]);
+    var app = angular.module('app', ['leodido.caretAware']);
+    app.controller('AppController', function($scope, $timeout) {
+      var textarea = angular.element(document.querySelector('#area'));
+
+      $scope.insStringAt = function (str, pos) {
+        var caretController = textarea.controller('caretAware');
+        var text = textarea.val();
+        caretController.setPosition(pos);
+        pos = caretController.getPosition();
+        textarea.val(text.substring(0, pos) + str + text.substring(pos));
+      };
+
+//      // Exec when DOM has finished rendering
+//      $timeout(function() {
+//        var caretController = textarea.controller('caretAware');
+//        var text = textarea.val();
+//        caretController.setPosition(2);
+//        var pos = caretController.getPosition();
+//        textarea.val(text.substring(0, pos) + 'b' + text.substring(pos));
+//      });
+
+      $scope.$watch('cursor', function(cursor) {
+        console.log('Position of caret named "cursor" (input element) changed: '+ cursor);
+        $scope.position = cursor;
+      });
+      $scope.$watch('position', function(position) {
+        console.log('position > ', position);
+        $scope.cursor = position;
+      });
+    });
   </script>
+
 </body>
 </html>

@@ -7,13 +7,14 @@
 </head>
 <body ng-app="app">
   <div ng-controller="CursorController">
-    <input type="text" name="input00" data-caret-aware="cursor"/>
-    <button ng-click="cursor = cursor + 1">++</button>
+    <input type="tel" name="input00" data-caret-aware="cursor"/>
+    <button ng-click="cursor = cursor + 1"><b>+</b></button>
+    <button ng-click="cursor = cursor - 1"><b>&ndash;</b></button>
   </div>
 
 
   <script src="../bower_components/angular/angular.js"></script>
-  <script src="../dist/caretaware.js"></script>
+  <script src="../dev.caretaware.min.js"></script>
   <script>
     angular.module('app', ['leodido.caretAware'])
       .controller('CursorController', ['$scope', function($scope) {
