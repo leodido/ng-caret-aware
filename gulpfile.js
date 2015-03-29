@@ -128,19 +128,6 @@ var settings = {
     'bower_components/closure-angularjs-http-promise_templated-externs/index.js'
   ],
   sources: [
-//    'bower_components/closure-library/closure/goog/base.js',
-//    'bower_components/closure-library/closure/goog/string/string.js',
-//    'bower_components/closure-library/closure/goog/debug/error.js',
-//    'bower_components/closure-library/closure/goog/dom/nodetype.js',
-//    'bower_components/closure-library/closure/goog/asserts/asserts.js',
-//    'bower_components/closure-library/closure/goog/array/array.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/util.js',
-//    'bower_components/closure-library/closure/goog/object/object.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/browser.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/engine.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/platform.js',
-//    'bower_components/closure-library/closure/goog/useragent/useragent.js',
-//    'bower_components/closure-library/closure/goog/dom/selection.js',
     bundle.directories.source + '/*.js'
   ],
   release: bundle.directories.release
@@ -251,5 +238,4 @@ gulp.task('bump', 'Bump version up for a new release', function() {
 
 gulp.task('default', false, ['help']);
 
-// TODO
-// [ ] - better beautified release file
+// TODO: better beautified release file

@@ -1,5 +1,5 @@
 'use strict';
-/* jshint -W117 */
+
 exports.config = {
 
   specs: [
