@@ -22,8 +22,9 @@
   <input type="number" id="position" data-ng-model="position"/>
   <button data-ng-click="cursor = cursor + 1"><b>+</b></button>
   <button data-ng-click="cursor = cursor - 1"><b>&ndash;</b></button>
+  <button data-ng-click="printSelection()"><b>print selection</b></button>
   <hr/>
-
+  <pre id="selection"></pre>
 
   <script type="text/javascript">
     var app = angular.module('app', ['leodido.caretAware']);
@@ -55,6 +56,13 @@
         console.log('position > ', position);
         $scope.cursor = position;
       });
+
+      $scope.printSelection = function() {
+        var caretAwareCtrl = textarea.controller('caretAware');
+        var selection = caretAwareCtrl.getSelection();
+        var preEl = angular.element(document.querySelector('#selection'));
+        preEl.text(JSON.stringify(selection));
+      };
     });
   </script>
 
