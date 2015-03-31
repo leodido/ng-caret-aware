@@ -7,20 +7,35 @@
 </head>
 <body ng-app="app">
   <div ng-controller="CursorController">
-    <input type="tel" name="input00" data-caret-aware="cursor"/>
+    <input type="tel" name="input00" id="input00" data-caret-aware="cursor"/>
     <button ng-click="cursor = cursor + 1"><b>+</b></button>
     <button ng-click="cursor = cursor - 1"><b>&ndash;</b></button>
+    <button ng-click="printSelection()"><b>print selection</b></button>
   </div>
-
+  <div>
+    <pre id="selection"></pre>
+  </div>
 
   <script src="../bower_components/angular/angular.js"></script>
   <script src="../dev.caretaware.min.js"></script>
   <script>
     angular.module('app', ['leodido.caretAware'])
       .controller('CursorController', ['$scope', function($scope) {
+        var inputEl = angular.element(document.querySelector('#input00'));
+
         $scope.$watch('cursor', function(cursor) {
+          var caretAwareCtrl = inputEl.controller('caretAware');
           console.log('Position of caret named "cursor" (input element) changed: '+ cursor);
+          console.log('Selection info: ', caretAwareCtrl.getSelection());
+          // $scope.printSelection();
         });
+
+        $scope.printSelection = function() {
+          var caretAwareCtrl = inputEl.controller('caretAware');
+          var selection = caretAwareCtrl.getSelection();
+          var preEl = angular.element(document.querySelector('#selection'));
+          preEl.text(JSON.stringify(selection));
+        };
       }]);
   </script>
 </body>

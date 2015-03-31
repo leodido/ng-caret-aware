@@ -5,7 +5,7 @@ Caret aware inputs
 
 **AngularJS directive for caret aware elements**.
 
-Put it on your HTML input elements and it will track the caret (i.e. cursor) exporting its position in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
+Put it on your HTML input elements and it will **track the caret** (i.e. cursor) exporting its **position** in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
 
 Weight: ~1.5KB.
 

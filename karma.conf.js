@@ -1,5 +1,6 @@
-exports.config = function(config) {
-  'use strict';
+'use strict';
+
+module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -16,7 +17,12 @@ exports.config = function(config) {
       'bower_components/closure-library/closure/goog/base.js',
       'bower_components/closure-library/closure/goog/deps.js',
 
-      'lib/**/*.js',
+      'lib/constants.js',
+      'lib/selection.typedef.js',
+      'lib/caret.controller.js',
+      'lib/caretaware.directive.js',
+      'lib/module.js',
+
       'test/unit/**/*.spec.js'
     ],
 
@@ -36,7 +42,7 @@ exports.config = function(config) {
 
     coverageReporter: {
       type: 'html',
-      dir: 'test/coverage'
+      dir: 'coverage'
     },
 
     // web server port
@@ -54,7 +60,7 @@ exports.config = function(config) {
 
     // start these browsers
     // available browser launchers: https://nprmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS', 'Chrome', 'Firefox'],
+    browsers: [/*'PhantomJS',*/ 'Chrome' /*, 'Firefox'*/],
 
     // continuous integration mode: if true, karma captures browsers, runs the tests and exits
     singleRun: true

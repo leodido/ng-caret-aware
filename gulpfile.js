@@ -128,6 +128,7 @@ var settings = {
     'bower_components/closure-angularjs-http-promise_templated-externs/index.js'
   ],
   sources: [
+    'bower_components/closure-library/closure/goog/base.js',
     bundle.directories.source + '/*.js'
   ],
   release: bundle.directories.release
