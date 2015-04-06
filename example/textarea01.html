@@ -28,7 +28,7 @@
 
   <script type="text/javascript">
     var app = angular.module('app', ['leodido.caretAware']);
-    app.controller('AppController', function($scope, $timeout) {
+    app.controller('AppController', function($scope/*, $timeout*/) {
       var textarea = angular.element(document.querySelector('#area'));
 
       $scope.insStringAt = function (str, pos) {
