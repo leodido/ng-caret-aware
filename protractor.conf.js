@@ -1,24 +1,34 @@
 'use strict';
 
-exports.config = {
+var bundle = require('./package.json');
 
-  specs: [
-    'test/e2e/**.scenario.js'
-  ],
+exports.config = {
+  seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
 
   capabilities: {
-    'browserName': 'firefox'
+    'browserName': 'chrome'
   },
 
-  baseUrl: 'http://localhost:8000/',
+  specs: [
+    bundle.directories.e2e + '/**.scenario.js'
+  ],
 
-  framework: 'jasmine2'
+  framework: 'jasmine2',
 
-  /*,
-  onPrepare: function () {
-    require('jasmine-spec-reporter');
-    jasmine.getEnv().addReporter(new jasmine.SpecReporter());
+  jasmineNodeOpts: {
+    showColors: true,
+    isVerbose: true,
+    includeStackTrace: true,
+    print: function() {}
+  },
+
+  baseUrl: 'http://127.0.0.1:' + bundle.server.port,
+
+  onPrepare: function() {
+    var SpecReporter = require('jasmine-spec-reporter');
+    jasmine.getEnv().addReporter(new SpecReporter({
+      displayStacktrace: true,
+      displayPendingSpec: true
+    }));
   }
-  */
-
 };

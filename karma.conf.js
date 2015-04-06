@@ -1,5 +1,7 @@
 'use strict';
 
+var bundle = require('./package.json');
+
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -23,7 +25,7 @@ module.exports = function(config) {
       'lib/caretaware.directive.js',
       'lib/module.js',
 
-      'test/unit/**/*.spec.js'
+      bundle.directories.unit + '/**/*.spec.js'
     ],
 
     // list of files to exclude

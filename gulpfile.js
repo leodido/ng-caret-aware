@@ -9,9 +9,12 @@ var gulp = require('gulp'),
     minimist = require('minimist'),
     del = require('del'),
     extend = require('node.extend'),
-    beautify = require('gulp-jsbeautifier'),
     sequence = require('run-sequence'),
-    connect = require('gulp-connect'),
+    karma = require('karma').server,
+    webserver = require('gulp-webserver'),
+    protractor = require('gulp-protractor').protractor,
+    webdriverStandalone = require('gulp-protractor').webdriver_standalone,
+    webdriverUpdate = require('gulp-protractor').webdriver_update,
     allowedLevels = ['major', 'minor', 'patch', 'prerelease'],
     allowedEnvironments = ['production', 'development'],
     knownArgs = {
@@ -73,7 +76,7 @@ bannerHelp.options.banner = 'Prepend banner to the built file';
  * @property {!string} homepage
  * @property {!string} version
  * @property {!string} main
- * @property {{source: !string, example: !string}} directories
+ * @property {{source: !string, example: !string, unit: !string, e2e: !string}} directories
  * @property {{name: !string, email: !string}} author
  */
 var PackageJson;
@@ -105,11 +108,11 @@ gulp = gulp = require('gulp-help')(gulp, {
 /**
  * @type {{
  * compiler: string,
- * prefixes: {dev: !string},
- * output: {beautified: !string, minified: !string, sourcempa: !string},
+ * prefixes: {dev: string},
+ * output: {minified: string, sourcemap: string},
  * externs: string[],
- * sources: string[],
- * release: !string
+ * sources: *[],
+ * release: string
  * }}
  */
 var settings = {
@@ -118,9 +121,8 @@ var settings = {
     dev: 'dev.'
   },
   output: {
-    beautified: bundle.main + '.js',
-    minified: bundle.main + '.min.js',
-    sourcemap: bundle.main + '.min.js.map'
+    minified: /** @type {string} */ (bundle.main + '.min.js'),
+    sourcemap: /** @type {string} */ (bundle.main + '.min.js.map')
   },
   externs: [
     'bower_components/closure-angularjs-externs/index.js',
@@ -131,7 +133,7 @@ var settings = {
     'bower_components/closure-library/closure/goog/base.js',
     bundle.directories.source + '/*.js'
   ],
-  release: bundle.directories.release
+  release: /** @type {string} */ (bundle.directories.release)
 };
 
 gulp.task('lint', 'Lint JS source files', [], function() {
@@ -144,33 +146,6 @@ gulp.task('lint', 'Lint JS source files', [], function() {
       .pipe(debug({ title: 'Lint' }))
       .pipe(gjslint(lintOptions))
       .pipe(gjslint.reporter('console'), { fail: true });
-});
-
-gulp.task('simple-compile', false, [], function() {
-  return gulp.src(settings.sources)
-      .pipe(debug({ title: 'Input' }))
-      .pipe(ccompiler({
-        compilerPath: settings.compiler,
-        fileName: settings.output.beautified,
-        compilerFlags: {
-          compilation_level: 'SIMPLE_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT5_STRICT',
-          angular_pass: true,
-          formatting: ['PRETTY_PRINT', 'SINGLE_QUOTES'],
-          generate_exports: true,
-          manage_closure_dependencies: true,
-          define: [
-            'leodido.constants.DEBUG=' + (isProduction() ? 'false' : 'true')
-          ],
-          output_wrapper: (args.banner ? banner + '\n' : '') + '(function(){%output%})();'
-        }
-      }));
-});
-
-gulp.task('beauty', false, ['simple-compile'], function() {
-  return gulp.src(settings.output.beautified)
-      .pipe(beautify({ config: './.jsbeautifyrc' }))
-      .pipe(gulp.dest('./'));
 });
 
 gulp.task('compile', false, [], function() {
@@ -202,22 +177,13 @@ gulp.task('compile', false, [], function() {
 });
 
 gulp.task('build', 'Build the library', [], function(cb) {
-  //sequence(['clean', 'lint'], (isProduction() ? 'compile' : ['beauty', 'compile']), cb); // FIXME: beautified disabled
   sequence(['clean', 'lint'], 'compile', cb);
 }, {
   options: extend(bannerHelp.options, environmentsHelp.options)
 });
 
-gulp.task('connect', function() {
-  connect.server({
-    port: 8000,
-    livereload: true
-  });
-});
-
 gulp.task('clean', 'Clean build directory', function(cb) {
   var hello = [
-    settings.output.beautified,
     (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified
   ];
   if (!isProduction()) {
@@ -237,6 +203,40 @@ gulp.task('bump', 'Bump version up for a new release', function() {
       .pipe(gulp.dest('./'));
 }, levelsHelp);
 
-gulp.task('default', false, ['help']);
+gulp.task('karma', 'Run karma tests', [], function(done) {
+  karma.start(
+      {
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+      },
+      done
+  );
+});
 
-// TODO: better beautified release file
+var stream;
+gulp.task('connect', false, [], function() {
+  stream = gulp.src(__dirname)
+      .pipe(webserver({
+        port: bundle.server.port,
+        directoryListing: true
+      }));
+});
+
+// Update/install webdriver
+gulp.task('webdriver:update', false, [], webdriverUpdate);
+
+// Run webdriver standalone server indefinitely. Usually not required.
+gulp.task('webdriver:standalone', false, ['webdriver:update'], webdriverStandalone);
+
+gulp.task('protractor', 'Run protractor E2E tests', ['connect', 'webdriver:update'], function() {
+  gulp.src(bundle.directories.e2e + '/**.scenario.js')
+      .pipe((protractor({
+        configFile: __dirname + '/protractor.conf.js'
+      })).on('error', function(e) {
+        throw e;
+      })).on('end', function() {
+        stream.emit('kill');
+      });
+});
+
+gulp.task('default', false, ['help']);
