@@ -149,16 +149,130 @@ describe('caret aware input', function() {
     });
   });
 
+  describe('should track caret movements when the text of the element is selected', function() {
+    var text,
+        selectionBtn,
+        selectionRes;
+    beforeEach(function() {
+      selectionBtn = element(by.buttonText('print selection'));
+      selectionRes = element(by.id('selection'));
+      text = '123456789';
+      el.sendKeys(text);
+    });
 
-  // TODO: click in the between and insert text
+    it('should correctly retrieve selection info when text is selected through SHIFT + ARROW LEFT', function() {
+      var arrows = 4,
+          resultingStart = text.length - arrows;
+      // Cursor is at the end, select RTL: KEYDOWN W/ SHIFT + ARROW_LEFT(s) + KEYUP W/ SHIFT
+      browser.actions()
+          .keyDown(protractor.Key.SHIFT)
+          .sendKeys(Array(arrows + 1).join(protractor.Key.ARROW_LEFT))
+          .keyUp(protractor.Key.SHIFT)
+          .perform();
+      // Check resulting start pos
+      el.evaluate(attrVal).then(function(pos) {
+        expect(pos).toEqual(resultingStart);
+      });
+      // Check selection info
+      browser.actions().click(selectionBtn).perform();
+      selectionRes.getText().then(function(content) {
+        expect(JSON.parse(content)).toEqual({
+          start: resultingStart,
+          end: text.length,
+          length: arrows,
+          text: text.substr(resultingStart, arrows)
+        });
+      });
+    });
+
+    it('should correctly retrieve selection info when text is selected through SHIFT + ARROW RIGHT', function() {
+      var arrows = 4,
+          resultingEnd = arrows;
+      el.sendKeys(protractor.Key.UP);
+      // Cursor is at the 0, select LTR: KEYDOWN W/ SHIFT + ARROW_RIGHT(s) + KEYUP W/ SHIFT
+      browser.actions()
+          .keyDown(protractor.Key.SHIFT)
+          .sendKeys(Array(arrows + 1).join(protractor.Key.ARROW_RIGHT))
+          .keyUp(protractor.Key.SHIFT)
+          .perform();
+      // Check start pos
+      el.evaluate(attrVal).then(function(pos) {
+        expect(pos).toEqual(0);
+      });
+      // Check selection info
+      browser.actions().click(selectionBtn).perform();
+      selectionRes.getText().then(function(content) {
+        expect(JSON.parse(content)).toEqual({
+          start: 0,
+          end: resultingEnd,
+          length: arrows,
+          text: text.substr(0, resultingEnd)
+        });
+      });
+    });
+
+    it('should correctly handle CTRL + A', function() {
+      el.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, 'a'));
+      el.evaluate(attrVal).then(function(pos) {
+        expect(pos).toEqual(0);
+      });
+      // Check selection info
+      browser.actions().click(selectionBtn).perform();
+      selectionRes.getText().then(function(content) {
+        expect(JSON.parse(content)).toEqual({
+          start: 0,
+          end: text.length,
+          length: text.length,
+          text: text
+        });
+      });
+    });
+
+    it('should allow to click when content is selected and update caret position', function() {
+      browser.actions()
+          .keyDown(protractor.Key.SHIFT)
+          .sendKeys(Array(text.length + 1).join(protractor.Key.ARROW_LEFT))
+          .keyUp(protractor.Key.SHIFT)
+          .perform();
+      //
+      el.evaluate(attrVal).then(function(pos) {
+        expect(pos).toEqual(0);
+        // Now click at (25,15) pixels offset from top left (i.e., aproximately after third character)
+        browser.actions()
+            .mouseMove(el, {x: 25, y: 15})
+            .click()
+            .perform();
+        // Verify
+        el.evaluate(attrVal).then(function(pos) {
+          expect(pos).toEqual(3);
+        });
+        browser.actions().click(selectionBtn).perform();
+        selectionRes.getText().then(function(content) {
+          expect(JSON.parse(content)).toEqual({
+            start: 3,
+            end: 3,
+            length: 0,
+            text: ''
+          });
+        });
+      });
+    });
+  });
+
   // DONE: prepend text
   // DONE: append text
   // DONE: delete text (backspace)
   // DONE: delete text (canc)
   // DONE: UP and END
   // DONE: movement with arrow keys
+
+  // DONE: selection with special keys (shift + arrow keys)
+  // DONE: selection with ctrl + A
+  // DONE: selection and click inside the selection
+
+  // TODO: click at the end
+  // TODO: click at the start
+  // TODO: click in the between and insert text
+  // TODO: click in the between and delete text (backspace)
   // TODO: click in the between and delete text (canc)
-  // TODO: selection with mouse
-  // TODO: selection with special keys (shift + arrow key, ctrl + A)
-  // TODO: selection and click inside the selection
 });
