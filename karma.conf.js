@@ -62,7 +62,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://nprmjs.org/browse/keyword/karma-launcher
-    browsers: [/*'PhantomJS',*/ 'Chrome' /*, 'Firefox'*/],
+    browsers: ['Chrome'],
 
     // continuous integration mode: if true, karma captures browsers, runs the tests and exits
     singleRun: true

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Angular caret aware elements - Input scenario</title>
+</head>
+<body data-ng-app="app">
+<div data-ng-controller="CursorController">
+  <input type="tel" name="input" id="input" data-caret-aware="cursor"/>
+  <button data-ng-click="printSelection()"><b>print selection</b></button>
+</div>
+<div>
+  <pre id="selection"></pre>
+</div>
+
+<script src="../../bower_components/angular/angular.js"></script>
+<script src="../../dev.caretaware.min.js"></script>
+<script type="text/javascript">
+  angular.module('app', ['leodido.caretAware'])
+    .controller('CursorController', ['$scope', function($scope) {
+      var inputEl = angular.element(document.querySelector('#input'));
+
+      $scope.printSelection = function() {
+        var caretAwareCtrl = inputEl.controller('caretAware');
+        var selection = caretAwareCtrl.getSelection();
+        var preEl = angular.element(document.querySelector('#selection'));
+        preEl.text(JSON.stringify(selection));
+      };
+    }]);
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Angular caret aware elements - TextArea example 01</title>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.js"></script> <!-- ../bower_components/angular/angular.js -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.js"></script>
     <script src="../dev.caretaware.min.js"></script>
 </head>
 <body data-ng-app="app" data-ng-controller="AppController">
@@ -49,7 +49,8 @@
 //      });
 
       $scope.$watch('cursor', function(cursor) {
-        console.log('Position of caret named "cursor" (input element) changed: '+ cursor);
+        var caretController = textarea.controller('caretAware');
+        console.log('Position of caret named "cursor" (input element) changed', cursor, caretController.getPosition());
         $scope.position = cursor;
       });
       $scope.$watch('position', function(position) {

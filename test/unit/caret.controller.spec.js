@@ -1,5 +1,6 @@
 'use strict';
 
+
 describe('caret controller', function() {
   leodido.constants.DEBUG = false;
 
@@ -21,7 +22,7 @@ describe('caret controller', function() {
       scope = element.isolateScope() || element.scope();
     }));
 
-    it('should an invalid target tag do not have the support', function() {
+    it('should an invalid target do not have the support', function() {
       var target = element[0];
       expect(('setSelectionRange' in target) || ('selectionStart' in target)).toBe(false);
       expect(('createTextRange' in target) || ('selection' in document)).toBe(false);
@@ -37,6 +38,34 @@ describe('caret controller', function() {
           expect(ctrl.getPosition()).toEqual(0);
           expect(ctrl.getSelection()).toEqual({ start: 0, end: 0, length: 0, text: '' });
         });
+  });
+
+  describe('browser support', function() {
+    var scope, ctrl, element;
+
+    beforeEach(inject(function(_$rootScope_, $compile) {
+      scope = _$rootScope_.$new();
+
+      element = angular.element('<input caret-aware></div>');
+
+      $compile(element)(scope);
+      scope.$digest();
+
+      ctrl = element.controller(leodido.constants.CARETAWARE_DIRECTIVE_NAME);
+
+      scope = element.isolateScope() || element.scope();
+    }));
+
+    // Almost one of the two supported ways, otherwise browser is not supported
+    it('should a valid target be supported', function() {
+      var target = element[0];
+      var condition = (('setSelectionRange' in target) || ('selectionStart' in target)) ||
+                      (('createTextRange' in target) || ('selection' in document));
+      if (!condition) {
+        fail('browser not supported.');
+        // TODO: fail fast, shutdown test suite
+      }
+    });
   });
 
   // TODO: study focus questions
@@ -76,7 +105,8 @@ describe('caret controller', function() {
   describe('interface', function() {
     var scope,
         ctrl,
-        text = 'text';
+        text = 'text',
+        varname = leodido.constants.CARETAWARE_DEFAULT_NS;
 
     beforeEach(inject(function(_$rootScope_, $compile) {
       scope = _$rootScope_.$new();
@@ -108,21 +138,33 @@ describe('caret controller', function() {
       });
 
       it('should accept only numeric values and store them as integers', function() {
+        // NOTE
+        // getPosition() on Firefox SEEMS to do not work while $scope variable correctly reflects setPosition() changes
+        // but this SEEMS to happens only in test cases
+
         expect(function() { ctrl.setPosition(0); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition(0.6); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition('0'); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition('0.6'); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition(1); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition(1.6); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition('1'); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition('1.6'); }).not.toThrowError(TypeError);
+        expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
       });
 
@@ -226,6 +268,3 @@ describe('caret controller', function() {
 
   });
 });
-
-// TODO: run the same tests with TEXTAREAs!
-// TODO: verify that newlines do not create issues on different platforms

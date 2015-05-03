@@ -27,7 +27,7 @@
     "gulp-protractor": "0.0.12",
     "gulp-util": "~3.0.4",
     "gulp-webserver": "^0.9.0",
-    "jasmine-core": "^2.2.0",
+    "jasmine-core": "2.2.1",
     "jasmine-spec-reporter": "^2.1.0",
     "karma": "^0.12.31",
     "karma-chrome-launcher": "^0.1.7",

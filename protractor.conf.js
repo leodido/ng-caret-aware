@@ -22,6 +22,23 @@ exports.config = {
     print: function() {}
   },
 
+  params: {
+    scenarios: [
+      {
+        page: 'test/e2e/input.html',
+        id: 'input',
+        text: '123456789',
+        type: 'input'
+      },
+      {
+        page: 'test/e2e/textarea.html',
+        id: 'textarea',
+        text: 'a\n\n   z',
+        type: 'textarea'
+      }
+    ]
+  },
+
   baseUrl: 'http://127.0.0.1:' + bundle.server.port,
 
   onPrepare: function() {
