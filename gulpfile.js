@@ -6,10 +6,14 @@ var gulp = require('gulp'),
     ccompiler = require('gulp-closure-compiler'),
     gjslint = require('gulp-gjslint'),
     gutil = require('gulp-util'),
+    jsonedit = require('gulp-json-editor'),
+    rename = require('gulp-rename'),
+    extreplace = require('gulp-ext-replace'),
     minimist = require('minimist'),
     del = require('del'),
     extend = require('node.extend'),
     sequence = require('run-sequence'),
+    path = require('path'),
     karma = require('karma').server,
     webserver = require('gulp-webserver'),
     protractor = require('gulp-protractor').protractor,
@@ -76,7 +80,7 @@ bannerHelp.options.banner = 'Prepend banner to the built file';
  * @property {!string} homepage
  * @property {!string} version
  * @property {!string} main
- * @property {{source: !string, example: !string, unit: !string, e2e: !string}} directories
+ * @property {{source: !string, dist: !string, example: !string, unit: !string, e2e: !string}} directories
  * @property {{name: !string, email: !string}} author
  */
 var PackageJson;
@@ -163,32 +167,82 @@ gulp.task('compile', false, [], function() {
     ],
     warning_level: 'VERBOSE'
   };
+  var dest = bundle.directories.dist;
   if (!isProduction()) {
     var sourcemap = settings.prefixes.dev + settings.output.sourcemap;
-    flags.create_source_map = sourcemap;
+    flags.create_source_map = path.join(dest, sourcemap);
     flags.output_wrapper += '\n//# sourceMappingURL=' + sourcemap;
   }
-  gulp.src(settings.sources)
+  return gulp.src(settings.sources)
       .pipe(ccompiler({
         compilerPath: settings.compiler,
-        fileName: (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified,
+        fileName: path.join(dest, (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified),
         compilerFlags: flags
-      }));
+      }))
+      .pipe(gulp.dest('./'));
+});
+
+// Fix the source array paths of sourcemap file
+gulp.task('fix-sourcemap', false, ['compile'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Writing', file + '.fix') &&
+      gulp.src(file)
+          .pipe(jsonedit(function(json) {
+            var root = path.relative(bundle.directories.dist, './');
+            json['sources'] = json['sources'].map(function(o) {
+              return path.join(root, o);
+            });
+            json['sources'].forEach(function(src) {
+              gutil.log('Updated sourcemap source path:', src);
+            });
+            return json;
+          }))
+          .pipe(rename(file + '.fix'))
+          .pipe(gulp.dest('./'));
+});
+
+gulp.task('del-sourcemap', false, ['fix-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Deleted', path.relative('./', del.sync([file])[0]));
+});
+
+gulp.task('upd-sourcemap', false, ['del-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Copying', file + '.fix', 'to', file) &&
+      gulp.src([file + '.fix'])
+          .pipe(rename(file))
+          .pipe(gulp.dest('./'));
+});
+
+gulp.task('dist', false, ['upd-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Deleted', path.relative('./', del.sync([file + '.fix'])[0]));
 });
 
 gulp.task('build', 'Build the library', [], function(cb) {
-  sequence(['clean', 'lint'], 'compile', cb);
+  sequence(['clean', 'lint'], 'dist', cb);
 }, {
   options: extend(bannerHelp.options, environmentsHelp.options)
 });
 
 gulp.task('clean', 'Clean build directory', function(cb) {
   var hello = [
-    (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified
+    path.join(bundle.directories.dist, (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified)
   ];
   if (!isProduction()) {
-    hello.push(settings.prefixes.dev + settings.output.sourcemap);
+    hello.push(path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap));
   }
+  hello.forEach(function(filepath) {
+    gutil.log('Deleting', filepath);
+  });
 
   del(hello, cb);
 }, environmentsHelp);
