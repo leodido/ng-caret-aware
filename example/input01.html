@@ -8,8 +8,8 @@
 <body data-ng-app="app">
   <div data-ng-controller="CursorController">
     <input type="tel" name="input00" id="input00" data-caret-aware="cursor"/>
-    <button data-ng-click="cursor = cursor + 1"><b>+</b></button>
-    <button data-ng-click="cursor = cursor - 1"><b>&ndash;</b></button>
+    <button data-ng-click="incPosition()"><b>+</b></button>
+    <button data-ng-click="decPosition()"><b>&ndash;</b></button>
     <button data-ng-click="printSelection()"><b>print selection</b></button>
   </div>
   <div>
@@ -24,13 +24,21 @@
         var inputEl = angular.element(document.querySelector('#input00'));
 
         $scope.$watch('cursor', function(cursor) {
-          console.log($scope);
-
           var caretAwareCtrl = inputEl.controller('caretAware');
           console.log('Position of caret named "cursor" (input element) changed', cursor, caretAwareCtrl.getPosition());
           console.log('Selection info: ', caretAwareCtrl.getSelection());
           // $scope.printSelection();
         });
+
+        $scope.decPosition = function() {
+          var caretAwareCtrl = inputEl.controller('caretAware');
+          caretAwareCtrl.setPosition(caretAwareCtrl.getPosition() - 1);
+        };
+
+        $scope.incPosition = function() {
+          var caretAwareCtrl = inputEl.controller('caretAware');
+          caretAwareCtrl.setPosition(caretAwareCtrl.getPosition() + 1);
+        };
 
         $scope.printSelection = function() {
           var caretAwareCtrl = inputEl.controller('caretAware');

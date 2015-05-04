@@ -138,10 +138,6 @@ describe('caret controller', function() {
       });
 
       it('should accept only numeric values and store them as integers', function() {
-        // NOTE
-        // getPosition() on Firefox SEEMS to do not work while $scope variable correctly reflects setPosition() changes
-        // but this SEEMS to happens only in test cases
-
         expect(function() { ctrl.setPosition(0); }).not.toThrowError(TypeError);
         expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);

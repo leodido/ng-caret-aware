@@ -5,9 +5,15 @@ var bundle = require('./package.json');
 exports.config = {
   seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
 
-  capabilities: {
+  // capabilities: {
+  //  'browserName': 'firefox'
+  // },
+
+  multiCapabilities: [{
     'browserName': 'chrome'
-  },
+  } , {
+    'browserName': 'firefox'
+  }],
 
   specs: [
     bundle.directories.e2e + '/**.scenario.js'
@@ -47,5 +53,13 @@ exports.config = {
       displayStacktrace: true,
       displayPendingSpec: true
     }));
+
+    browser.getProcessedConfig().then(function(config) {
+      browser.name = config.capabilities.browserName;
+    });
+
+//    browser.getCapabilities().then(function(cap) {
+//      browser.name = cap.caps_.browserName;
+//    });
   }
 };
