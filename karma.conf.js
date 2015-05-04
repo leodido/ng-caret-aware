@@ -3,9 +3,9 @@
 var bundle = require('./package.json');
 
 module.exports = function(config) {
-  config.set({
+  var cfg = {
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: './',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -43,8 +43,10 @@ module.exports = function(config) {
     reporters: ['spec', 'coverage'],
 
     coverageReporter: {
-      type: 'html',
-      dir: 'coverage'
+      dir: 'coverage',
+      reporters: [
+        { type: 'lcov', subdir: 'report-lcov' }
+      ]
     },
 
     // web server port
@@ -62,9 +64,24 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://nprmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox'],
+    browsers: ['Firefox'],
+    
+    customLaunchers: {
+      ChromeTravisCI: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    },
 
     // continuous integration mode: if true, karma captures browsers, runs the tests and exits
     singleRun: true
-  });
+  };
+  
+  if (process.env.TRAVIS) {
+    cfg.browsers.push('ChromeTravisCI');
+  } else {
+    cfg.browsers.push('Chrome');
+  }
+
+  config.set(cfg);
 };
