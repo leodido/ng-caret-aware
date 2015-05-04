@@ -5,7 +5,7 @@ Caret aware inputs
 
 **AngularJS directive for caret aware elements**.
 
-Put it on your HTML input elements and it will **track the caret** (i.e. cursor) exporting its **position** in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
+Put it on your HTML elements (inputs or textareas, for now) and it will **track the caret** (i.e. cursor) exporting its **position** in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
 
 Moreover, it will expose an **API** (via its **controller**) to read and write caret position.
 
@@ -15,11 +15,11 @@ Weight: < 2KB.
 
 #### Releases
 
-Latest release files are in the [dist](tree/master/dist/) directory of this repository.
+Latest release files are in the [dist](dist/) directory of this repository.
 
 #### Note
 
-At the moment this directive can be used as attribute and comment.
+At the moment this directive can be used as attribute or as comment.
 
 APIs
 ----
@@ -57,26 +57,26 @@ caretAwareController.getSelection()
 
 #### Note
 
-Directly changing the scope caret variable (e.g., `$scope.caret += 1`) can lead to incongruences in the API methods due to the nature of AngularJS digest cycle.
+Directly changing the scope caret variable (e.g., `$scope.caret += 1`) can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
 
 Usage
 -----
 
 Include AngularJS, and the build you desire (e.g., `dist/caretaware.min.js`).
  
-Then load the `leodido.caretAware` AngularJS module. E.g.,
+Then load the **leodido.caretAware** AngularJS module. E.g.,
 
 ```javascript
 var app = angular.module('myAwesomeModule', ['leodido.caretAware']);
 ```
 
-Instantiate the directive on the element you desire.
+Instantiate the directive.
 
 ```html
 <input type="text" name="myCursorField" caret-aware="cursor"/>
 ```
 
-And the parent scope of this element will contain a `cursor` variable (e.g., `$scope.cursor`) tracking the caret position of your element's content.
+And the parent scope of this element will contain a **cursor** variable (e.g., `$scope.cursor`) tracking the caret position of your element's content.
 
 Alternatively you can simply instantiate it this way:
 
@@ -84,13 +84,31 @@ Alternatively you can simply instantiate it this way:
 <input type="text" name="myCaretField" caret-aware/>
 ```
 
-In such case the parent scope will contain a `caret` (the default name) variable (e.g., `$scope.caret`) tracking the caret position of the input named `myCaretField`.
+In such case the parent scope will contain a **caret** variable (e.g., `$scope.caret`) tracking the caret position of your input element.
 
-#### Note
+### Controller usage
 
-Want to use this directive APIs/controller?
+- Want to use this directive APIs/controller?
 
-See [example](/example) directory for further details.
+See [example](/example) directory for further details. For example [here](example/input01.html#L39).
+
+- Want to use this directive APIs in your custom directive?
+
+Simply require it. E.g.,
+
+```javascript
+var a = angular.module('demo', []);
+a.directive('test', function() {
+  return {
+      restrict: 'A',
+      require: ['caretAware'],
+      // ...
+      link: function(scope, iElem, iAttrs, caretAwareController) {
+        // ...
+      }
+  }
+});
+```
 
 Installation
 ------------
@@ -123,7 +141,7 @@ Build
 
 Build is handled through [Gulp](https://github.com/gulpjs/gulp/) and performed mainly via [Google Closure Compiler](https://github.com/google/closure-compiler).
 
-Need help? Run `gulp help` !
+Need help? Run `gulp help`!
 
 ```
 # Usage
@@ -146,11 +164,13 @@ Need help? Run `gulp help` !
 Tests
 -----
 
-This library has been unit tested for Chrome and Firefox. Coverage is, at the moment, almost complete.
+This library has been unit tested for Chrome and Firefox.
+
+At the moment coverage is almost complete.
 
 Nevertheless E2E tests are provided for Chrome and Firefox, too.
 
-See [test](tree/master/test) directory for details.
+See [test](test) directory for details.
 
 Aknowledgements
 ---------------
