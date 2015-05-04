@@ -1,7 +1,7 @@
 Caret aware inputs
 ==================
 
-[![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)](http://bower.io/search/?q=ng-caret-aware)
+[![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)](http://bower.io/search/?q=ng-caret-aware) [![Travis branch](https://img.shields.io/travis/leodido/ng-caret-aware/master.svg?style=flat-square)](https://travis-ci.org/leodido/ng-caret-aware)
 
 **AngularJS directive for caret aware elements**.
 
@@ -24,7 +24,7 @@ At the moment this directive can be used as attribute or as comment.
 Usage
 -----
 
-Include AngularJS, and the build you desire (e.g., `dist/caretaware.min.js`).
+Include AngularJS, and the build you desire (e.g., [dist/caretaware.min.js](dist/caretaware.min.js)).
  
 Then load the **leodido.caretAware** AngularJS module. E.g.,
 
@@ -35,18 +35,18 @@ var app = angular.module('myAwesomeModule', ['leodido.caretAware']);
 Instantiate the directive.
 
 ```html
-<input type="text" name="myCursorField" caret-aware="cursor"/>
+<input type="text" name="myname" caret-aware="cursor"/>
 ```
 
-And the parent scope of this element will contain a **cursor** variable (e.g., `$scope.cursor`) tracking the caret position of your element's content.
+And the parent scope of this element will contain a **cursor** variable - e.g., `$scope.cursor` - tracking the caret position of your element's content.
 
 Alternatively you can simply instantiate it this way:
 
 ```html
-<input type="text" name="myCaretField" caret-aware/>
+<input type="text" name="myname" caret-aware/>
 ```
 
-In such case the parent scope will contain a **caret** variable (e.g., `$scope.caret`) tracking the caret position of your input element.
+In such case the parent scope will contain a **caret** variable - e.g., `$scope.caret` - tracking the caret position of your input element.
 
 ### Controller usage
 
@@ -109,9 +109,9 @@ caretAwareController.getSelection()
 
 #### Note
 
-Directly changing the scope caret variable (e.g., `$scope.caret += 1`) can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
+Directly changing the scope caret variable - e.g., `$scope.caret += 1` - can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
 
-Use the APIs!
+**Use the APIs!**
 
 Installation
 ------------
@@ -135,7 +135,7 @@ Distribution
 
 In the **dist** directory you can find both development and production ready library files:
 
-1. [dev.caretaware.min.js](dist/dev.caretaware.min.js) and its sourcemap (i.e., [dev.caretaware.min.js.map](dist/ev.caretaware.min.js.map) file) can be used for development purposes
+1. [dev.caretaware.min.js](dist/dev.caretaware.min.js) and its sourcemap (i.e., [dev.caretaware.min.js.map](dist/dev.caretaware.min.js.map) file) can be used for development purposes
 
 2. [caretaware.min.js](dist/caretaware.min.js) is the production version of this AngularJS module
 
