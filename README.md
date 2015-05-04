@@ -5,7 +5,7 @@ Caret aware inputs
 
 **AngularJS directive for caret aware elements**.
 
-Put it on your HTML elements (inputs or textareas, for now) and it will **track the caret** (i.e. cursor) exporting its **position** in a variable (named after the value assigned to the directive attribute) appended to the parent `$scope`.
+Put it on your HTML elements (inputs or textareas, for now) and it will **track the caret** (i.e. cursor) exporting its **position** in a variable (named after the value assigned to the directive attribute) appended to the parent scope.
 
 Moreover, it will expose an **API** (via its **controller**) to read and write caret position.
 
@@ -20,44 +20,6 @@ Latest release files are in the [dist](dist/) directory of this repository.
 #### Note
 
 At the moment this directive can be used as attribute or as comment.
-
-APIs
-----
-
-This is its public API, namely the recommended way to **manipulate and retrieve the caret position**.
-
-```javascript
-/**
-   * Retrieve the namespace of the directive instance
-   *
-   * @return {!string}
-   */
-caretAwareController.getNamespace()
-/**
- * Retrieve the (start) caret position
- *
- * @return {!number}
- */
-caretAwareController.getPosition()
-/**
- * Manually set the caret position
- *
- * @param {!number} pos
- * @return {!leodido.controller.Caret}
- * @throws TypeError
- */
-caretAwareController.setPosition(pos)
-/**
- * Retrive information about the current selection
- *
- * @return {{start: !number, end: !number, length: !number, text: !string}}
- */
-caretAwareController.getSelection()
-```
-
-#### Note
-
-Directly changing the scope caret variable (e.g., `$scope.caret += 1`) can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
 
 Usage
 -----
@@ -90,9 +52,9 @@ In such case the parent scope will contain a **caret** variable (e.g., `$scope.c
 
 - Want to use this directive APIs/controller?
 
-See [example](/example) directory for further details. For example [here](example/input01.html#L39).
+See [example](/example) directory for further details. For example [here](example/input01.html#L39-L40).
 
-- Want to use this directive APIs in your custom directive?
+- Want to use this directive APIs in your **custom directive**?
 
 Simply require it. E.g.,
 
@@ -104,11 +66,52 @@ a.directive('test', function() {
       require: ['caretAware'],
       // ...
       link: function(scope, iElem, iAttrs, caretAwareController) {
+        // caretAwareController.setPosition(1);
         // ...
       }
   }
 });
 ```
+
+APIs
+----
+
+This is its public API, namely the recommended way to **manipulate and retrieve the caret position**.
+
+```
+/**
+ * Retrieve the namespace of the directive instance
+ *
+ * @return {!string}
+ */
+caretAwareController.getNamespace()
+/**
+ * Retrieve the (start) caret position
+ *
+ * @return {!number}
+ */
+caretAwareController.getPosition()
+/**
+ * Manually set the caret position
+ *
+ * @param {!number} pos
+ * @return {!leodido.controller.Caret}
+ * @throws TypeError
+ */
+caretAwareController.setPosition(pos)
+/**
+ * Retrive information about the current selection
+ *
+ * @return {{start: !number, end: !number, length: !number, text: !string}}
+ */
+caretAwareController.getSelection()
+```
+
+#### Note
+
+Directly changing the scope caret variable (e.g., `$scope.caret += 1`) can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
+
+Use the APIs!
 
 Installation
 ------------
@@ -130,11 +133,11 @@ $ npm install
 Distribution
 ------------
 
-In the `dist` directory you can find both development and production ready library files:
+In the **dist** directory you can find both development and production ready library files:
 
-1. `dev.caretaware.min.js` and its sourcemap (i.e., `dev.caretaware.min.js.map` file) can be used for development purposes
+1. [dev.caretaware.min.js](dist/dev.caretaware.min.js) and its sourcemap (i.e., [dev.caretaware.min.js.map](dist/ev.caretaware.min.js.map) file) can be used for development purposes
 
-2. `caretaware.min.js` is the production version of this AngularJS module
+2. [caretaware.min.js](dist/caretaware.min.js) is the production version of this AngularJS module
 
 Build
 -----
