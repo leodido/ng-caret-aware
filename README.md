@@ -1,7 +1,7 @@
 Caret aware inputs
 ==================
 
-[![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)](http://bower.io/search/?q=ng-caret-aware) [![Travis branch](https://img.shields.io/travis/leodido/ng-caret-aware/master.svg?style=flat-square)](https://travis-ci.org/leodido/ng-caret-aware)
+[![Bower](https://img.shields.io/bower/v/ng-caret-aware.svg?style=flat-square)](http://bower.io/search/?q=ng-caret-aware) [![Codeship](https://img.shields.io/codeship/440cb4a0-d558-0132-89dc-4aea429a9964/master.svg?style=flat-square)]()
 
 **AngularJS directive for caret aware elements**.
 
