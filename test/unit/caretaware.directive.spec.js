@@ -41,7 +41,7 @@ describe('caret aware directive', function() {
        }
     );
 
-    it('should handle concurrent changes to the caret position (DOM and variable)', function() {
+    it('should handle concurrent changes to the caret position (DOM and variable)', function(done) {
       var val = 1,
           setPositionImpl = ctrl.setPosition,
           spy = spyOn(ctrl, 'setPosition').and.callThrough();
@@ -55,7 +55,7 @@ describe('caret aware directive', function() {
       // Simulate a change (e.g., caused by an external event) to the DOM caret position AND caret position variable
       scope.$apply(function() {
         setPositionImpl(val); // Use the original implementation, not the spied one
-
+        done();
         // Also the caret variable (i.e., scope[leodido.constants.CARETAWARE_DEFAULT_NS]) has changed
         // Test that the caret variable and the DOM caret position contains the same value
         expect(ctrl.getPosition()).toEqual(scope[leodido.constants.CARETAWARE_DEFAULT_NS]);
@@ -64,6 +64,7 @@ describe('caret aware directive', function() {
       // A new digest cycle start:
       // caret position variable (i.e. $scope.caret) and DOM caret position (retrieved via getPosition) are equal
       // we don't want setPosition to be called again
+      done();
       expect(spy.calls.count()).toEqual(1);
       spy.calls.reset();
       expect(ctrl.setPosition).not.toHaveBeenCalled();
@@ -112,7 +113,7 @@ describe('caret aware directive', function() {
       expect(spyGetPos).toHaveBeenCalled();
     });
 
-    it('should asynchronously evaluate the DOM caret position assigning it to the caret variable', function() {
+    it('should asynchronously evaluate the DOM caret position assigning it to the caret variable', function(done) {
       expect(scope.touched).toBeFalsy();
 
       ctrl.setPosition(text.length);
@@ -120,9 +121,10 @@ describe('caret aware directive', function() {
       // if we are not in a $digest cycle and no $digest has previously been scheduled $evalAsync schedules a $digest
       expect(spyEvalAsync).toHaveBeenCalled();
       scope.$digest();
+      done();
       expect(spyGetPos).toHaveBeenCalled();
       expect(spyGetPos()).toEqual(text.length);
-      expect(scope[leodido.constants.CARETAWARE_DEFAULT_NS]).toEqual(4);
+      expect(scope[leodido.constants.CARETAWARE_DEFAULT_NS]).toEqual(text.length);
     });
   });
 

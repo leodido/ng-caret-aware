@@ -76,7 +76,7 @@ a.directive('test', function() {
 APIs
 ----
 
-This is its public API, namely the recommended way to **manipulate and retrieve the caret position**.
+This is the public API to **manipulate and retrieve the caret position**.
 
 ```
 /**
@@ -86,13 +86,13 @@ This is its public API, namely the recommended way to **manipulate and retrieve 
  */
 caretAwareController.getNamespace()
 /**
- * Retrieve the (start) caret position
+ * Retrieve the element caret position
  *
  * @return {!number}
  */
 caretAwareController.getPosition()
 /**
- * Manually set the caret position
+ * Manually set the element caret position and the scope caret variable
  *
  * @param {!number} pos
  * @return {!leodido.controller.Caret}
@@ -109,9 +109,11 @@ caretAwareController.getSelection()
 
 #### Note
 
-Directly changing the scope caret variable - e.g., `$scope.caret += 1` - can lead to inconsistencies in the API methods due to the nature of AngularJS digest cycle.
-
-**Use the APIs!**
+1. the scope caret variable value - i.e., `$scope.caret` - is asynchronously bound to the actual element caret position,
+   so during the digest cycle the `getPosition()` could not reflect the scope caret variable value
+   
+2. in some browser (e.g., Chrome 42.0.2331) can happen that `setPosition()` will not be instantly applied, so the `getPosition()` could return the previous value;
+   see this [issue](https://code.google.com/p/chromium/issues/detail?id=32865)
 
 Installation
 ------------

@@ -64,24 +64,11 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://nprmjs.org/browse/keyword/karma-launcher
-    browsers: ['Firefox'],
-
-    customLaunchers: {
-      ChromeTravisCI: {
-        base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
-    },
+    browsers: ['Chrome', 'Firefox'],
 
     // continuous integration mode: if true, karma captures browsers, runs the tests and exits
     singleRun: true
   };
-
-  if (process.env.TRAVIS) {
-    cfg.browsers.push('ChromeTravisCI');
-  } else {
-    cfg.browsers.push('Chrome');
-  }
 
   config.set(cfg);
 };

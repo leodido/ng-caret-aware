@@ -137,29 +137,37 @@ describe('caret controller', function() {
         expect(function() { ctrl.setPosition(1 / 0); }).toThrowError(TypeError);
       });
 
-      it('should accept only numeric values and store them as integers', function() {
+      it('should accept only numeric values and store them as integers', function(done) {
         expect(function() { ctrl.setPosition(0); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition(0.6); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition('0'); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition('0.6'); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(0);
         expect(ctrl.getPosition()).toEqual(0);
         expect(function() { ctrl.setPosition(1); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition(1.6); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition('1'); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
         expect(function() { ctrl.setPosition('1.6'); }).not.toThrowError(TypeError);
+        done();
         expect(scope[varname]).toEqual(1);
         expect(ctrl.getPosition()).toEqual(1);
       });
@@ -169,17 +177,19 @@ describe('caret controller', function() {
       });
 
       describe('should enforce boundaries', function() {
-        it('should ignore values greater than content length', function() {
+        it('should ignore values greater than content length', function(done) {
           ctrl.setPosition(text.length + 2); // setPosition(6)
+          done();
           expect(ctrl.getPosition()).toEqual(text.length);
           expect(scope[leodido.constants.CARETAWARE_DEFAULT_NS]).toEqual(text.length);
         });
 
-        it('should consider negative values from right to left', function() {
+        it('should consider negative values from right to left', function(done) {
           var max = text.length; // e.g. 4
           for (var j = -1; j >= - max; j--) {
             ctrl.setPosition(j);
-            expect(ctrl.getPosition()).toEqual(max + j); // e.g. 4 + (-1) = 3, ..., 4 + (-4) = 0
+            done();
+            expect(ctrl.getPosition()).toEqual(max + j); // e.g., max + j = 4 + (-1) = 3, .., 4 + (-4) = 0
             expect(scope[leodido.constants.CARETAWARE_DEFAULT_NS]).toEqual(max + j);
           }
         });
@@ -255,9 +265,10 @@ describe('caret controller', function() {
         ctrl = element.controller(leodido.constants.CARETAWARE_DIRECTIVE_NAME);
       }));
 
-      it('should retrieve selection info even when no only start position is set', function() {
+      it('should retrieve selection info even when no only start position is set', function(done) {
         var val = 2;
         ctrl.setPosition(val);
+        done();
         expect(ctrl.getSelection()).toEqual({start: val, end: val, text: '', length: 0});
       });
     });
