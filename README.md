@@ -158,9 +158,9 @@ Need help? Run `gulp help`!
 #   --level=major|minor|patch|prerelease   Version level to increment
 #   clean                                  Clean build directory
 #   help                                   Display this help text
-#   karma                                   Run karma tests
+#   karma                                  Run karma tests
 #   lint                                   Lint JS source files
-#   protractor                              Run protractor E2E tests
+#   protractor                             Run protractor E2E tests
 #   version                                Print the library version
 ```
 
