@@ -18,6 +18,7 @@ var gulp = require('gulp'),
     protractor = require('gulp-protractor').protractor,
     webdriverStandalone = require('gulp-protractor').webdriver_standalone,
     webdriverUpdate = require('gulp-protractor').webdriver_update,
+    coveralls = require('gulp-coveralls'),
     allowedLevels = ['major', 'minor', 'patch', 'prerelease'],
     allowedEnvironments = ['production', 'development'],
     knownArgs = {
@@ -290,6 +291,28 @@ gulp.task('protractor', 'Run protractor E2E tests', ['connect', 'webdriver:updat
       })).on('end', function() {
         stream.emit('kill');
       });
+});
+
+gulp.task('coveralls', false, [], function() {
+  return gulp.src('coverage/lcov.info')
+      .pipe(coveralls());
+});
+
+gulp.task('check:lcov', false, [], function(cb) {
+  var parse = require('lcov-parse');
+  parse('coverage/lcov.info', function(error, data) {
+    if (!error) {
+      data.forEach(function(obj) {
+        var file = obj['file'];
+        delete obj['file'];
+        gutil.log('Coverage info for', file);
+        gutil.log(JSON.stringify(obj, 2, null));
+      });
+    } else {
+      gutil.log(gutil.colors.red('Error'), error);
+    }
+    cb();
+  });
 });
 
 gulp.task('default', false, ['help']);
