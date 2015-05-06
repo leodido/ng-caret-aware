@@ -13,6 +13,8 @@ Caret aware directive is designed to be **cross-browser**.
 
 Weight: < 2KB.
 
+See input demo live [here](http://bit.ly/input-ng-caret) or textarea demo live [here](http://bit.ly/textarea-ng-caret).
+
 #### Releases
 
 Latest release files are in the [dist](dist/) directory of this repository.
@@ -113,7 +115,7 @@ caretAwareController.getSelection()
    so during the digest cycle the `getPosition()` could not reflect the scope caret variable value
    
 2. in some browser (e.g., Chrome 42.0.2331) can happen that `setPosition()` will not be instantly applied, so the `getPosition()` could return the previous value;
-   see this [issue](https://code.google.com/p/chromium/issues/detail?id=32865)
+   see this [issue](https://code.google.com/p/chromium/issues/detail?id=32865).
 
 Installation
 ------------
