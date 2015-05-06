@@ -6,12 +6,19 @@ var gulp = require('gulp'),
     ccompiler = require('gulp-closure-compiler'),
     gjslint = require('gulp-gjslint'),
     gutil = require('gulp-util'),
+    jsonedit = require('gulp-json-editor'),
+    rename = require('gulp-rename'),
     minimist = require('minimist'),
     del = require('del'),
     extend = require('node.extend'),
-    beautify = require('gulp-jsbeautifier'),
     sequence = require('run-sequence'),
-    connect = require('gulp-connect'),
+    path = require('path'),
+    karma = require('karma').server,
+    webserver = require('gulp-webserver'),
+    protractor = require('gulp-protractor').protractor,
+    webdriverStandalone = require('gulp-protractor').webdriver_standalone,
+    webdriverUpdate = require('gulp-protractor').webdriver_update,
+    coveralls = require('gulp-coveralls'),
     allowedLevels = ['major', 'minor', 'patch', 'prerelease'],
     allowedEnvironments = ['production', 'development'],
     knownArgs = {
@@ -73,7 +80,7 @@ bannerHelp.options.banner = 'Prepend banner to the built file';
  * @property {!string} homepage
  * @property {!string} version
  * @property {!string} main
- * @property {{source: !string, example: !string}} directories
+ * @property {{source: !string, dist: !string, example: !string, unit: !string, e2e: !string}} directories
  * @property {{name: !string, email: !string}} author
  */
 var PackageJson;
@@ -105,11 +112,11 @@ gulp = gulp = require('gulp-help')(gulp, {
 /**
  * @type {{
  * compiler: string,
- * prefixes: {dev: !string},
- * output: {beautified: !string, minified: !string, sourcempa: !string},
+ * prefixes: {dev: string},
+ * output: {minified: string, sourcemap: string},
  * externs: string[],
- * sources: string[],
- * release: !string
+ * sources: *[],
+ * release: string
  * }}
  */
 var settings = {
@@ -118,9 +125,8 @@ var settings = {
     dev: 'dev.'
   },
   output: {
-    beautified: bundle.main + '.js',
-    minified: bundle.main + '.min.js',
-    sourcemap: bundle.main + '.min.js.map'
+    minified: /** @type {string} */ (bundle.main + '.min.js'),
+    sourcemap: /** @type {string} */ (bundle.main + '.min.js.map')
   },
   externs: [
     'bower_components/closure-angularjs-externs/index.js',
@@ -128,22 +134,10 @@ var settings = {
     'bower_components/closure-angularjs-http-promise_templated-externs/index.js'
   ],
   sources: [
-//    'bower_components/closure-library/closure/goog/base.js',
-//    'bower_components/closure-library/closure/goog/string/string.js',
-//    'bower_components/closure-library/closure/goog/debug/error.js',
-//    'bower_components/closure-library/closure/goog/dom/nodetype.js',
-//    'bower_components/closure-library/closure/goog/asserts/asserts.js',
-//    'bower_components/closure-library/closure/goog/array/array.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/util.js',
-//    'bower_components/closure-library/closure/goog/object/object.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/browser.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/engine.js',
-//    'bower_components/closure-library/closure/goog/labs/useragent/platform.js',
-//    'bower_components/closure-library/closure/goog/useragent/useragent.js',
-//    'bower_components/closure-library/closure/goog/dom/selection.js',
+    'bower_components/closure-library/closure/goog/base.js',
     bundle.directories.source + '/*.js'
   ],
-  release: bundle.directories.release
+  release: /** @type {string} */ (bundle.directories.release)
 };
 
 gulp.task('lint', 'Lint JS source files', [], function() {
@@ -156,33 +150,6 @@ gulp.task('lint', 'Lint JS source files', [], function() {
       .pipe(debug({ title: 'Lint' }))
       .pipe(gjslint(lintOptions))
       .pipe(gjslint.reporter('console'), { fail: true });
-});
-
-gulp.task('simple-compile', false, [], function() {
-  return gulp.src(settings.sources)
-      .pipe(debug({ title: 'Input' }))
-      .pipe(ccompiler({
-        compilerPath: settings.compiler,
-        fileName: settings.output.beautified,
-        compilerFlags: {
-          compilation_level: 'SIMPLE_OPTIMIZATIONS',
-          language_in: 'ECMASCRIPT5_STRICT',
-          angular_pass: true,
-          formatting: ['PRETTY_PRINT', 'SINGLE_QUOTES'],
-          generate_exports: true,
-          manage_closure_dependencies: true,
-          define: [
-            'leodido.constants.DEBUG=' + (isProduction() ? 'false' : 'true')
-          ],
-          output_wrapper: (args.banner ? banner + '\n' : '') + '(function(){%output%})();'
-        }
-      }));
-});
-
-gulp.task('beauty', false, ['simple-compile'], function() {
-  return gulp.src(settings.output.beautified)
-      .pipe(beautify({ config: './.jsbeautifyrc' }))
-      .pipe(gulp.dest('./'));
 });
 
 gulp.task('compile', false, [], function() {
@@ -200,41 +167,82 @@ gulp.task('compile', false, [], function() {
     ],
     warning_level: 'VERBOSE'
   };
+  var dest = bundle.directories.dist;
   if (!isProduction()) {
     var sourcemap = settings.prefixes.dev + settings.output.sourcemap;
-    flags.create_source_map = sourcemap;
+    flags.create_source_map = path.join(dest, sourcemap);
     flags.output_wrapper += '\n//# sourceMappingURL=' + sourcemap;
   }
-  gulp.src(settings.sources)
+  return gulp.src(settings.sources)
       .pipe(ccompiler({
         compilerPath: settings.compiler,
-        fileName: (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified,
+        fileName: path.join(dest, (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified),
         compilerFlags: flags
-      }));
+      }))
+      .pipe(gulp.dest('./'));
+});
+
+// Fix the source array paths of sourcemap file
+gulp.task('fix-sourcemap', false, ['compile'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Writing', file + '.fix') &&
+      gulp.src(file)
+          .pipe(jsonedit(function(json) {
+            var root = path.relative(bundle.directories.dist, './');
+            json['sources'] = json['sources'].map(function(o) {
+              return path.join(root, o);
+            });
+            json['sources'].forEach(function(src) {
+              gutil.log('Updated sourcemap source path:', src);
+            });
+            return json;
+          }))
+          .pipe(rename(file + '.fix'))
+          .pipe(gulp.dest('./'));
+});
+
+gulp.task('del-sourcemap', false, ['fix-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Deleted', path.relative('./', del.sync([file])[0]));
+});
+
+gulp.task('upd-sourcemap', false, ['del-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Copying', file + '.fix', 'to', file) &&
+      gulp.src([file + '.fix'])
+          .pipe(rename(file))
+          .pipe(gulp.dest('./'));
+});
+
+gulp.task('dist', false, ['upd-sourcemap'], function() {
+  var file = path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap);
+  return isProduction() ?
+      true :
+      gutil.log('Deleted', path.relative('./', del.sync([file + '.fix'])[0]));
 });
 
 gulp.task('build', 'Build the library', [], function(cb) {
-  //sequence(['clean', 'lint'], (isProduction() ? 'compile' : ['beauty', 'compile']), cb); // FIXME: beautified disabled
-  sequence(['clean', 'lint'], 'compile', cb);
+  sequence(['clean', 'lint'], 'dist', cb);
 }, {
   options: extend(bannerHelp.options, environmentsHelp.options)
 });
 
-gulp.task('connect', function() {
-  connect.server({
-    port: 8000,
-    livereload: true
-  });
-});
-
 gulp.task('clean', 'Clean build directory', function(cb) {
   var hello = [
-    settings.output.beautified,
-    (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified
+    path.join(bundle.directories.dist, (isProduction() ? '' : settings.prefixes.dev) + settings.output.minified)
   ];
   if (!isProduction()) {
-    hello.push(settings.prefixes.dev + settings.output.sourcemap);
+    hello.push(path.join(bundle.directories.dist, settings.prefixes.dev + settings.output.sourcemap));
   }
+  hello.forEach(function(filepath) {
+    gutil.log('Deleting', filepath);
+  });
 
   del(hello, cb);
 }, environmentsHelp);
@@ -249,7 +257,62 @@ gulp.task('bump', 'Bump version up for a new release', function() {
       .pipe(gulp.dest('./'));
 }, levelsHelp);
 
-gulp.task('default', false, ['help']);
+gulp.task('karma', 'Run karma tests', [], function(done) {
+  karma.start(
+      {
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+      },
+      done
+  );
+});
 
-// TODO
-// [ ] - better beautified release file
+var stream;
+gulp.task('connect', false, [], function() {
+  stream = gulp.src(__dirname)
+      .pipe(webserver({
+        port: bundle.server.port,
+        directoryListing: true
+      }));
+});
+
+// Update/install webdriver
+gulp.task('webdriver:update', false, [], webdriverUpdate);
+
+// Run webdriver standalone server indefinitely. Usually not required.
+gulp.task('webdriver:standalone', false, ['webdriver:update'], webdriverStandalone);
+
+gulp.task('protractor', 'Run protractor E2E tests', ['connect', 'webdriver:update'], function() {
+  gulp.src(bundle.directories.e2e + '/**.scenario.js')
+      .pipe((protractor({
+        configFile: __dirname + '/protractor.conf.js'
+      })).on('error', function(e) {
+        throw e;
+      })).on('end', function() {
+        stream.emit('kill');
+      });
+});
+
+gulp.task('coveralls', false, [], function() {
+  return gulp.src('coverage/lcov.info')
+      .pipe(coveralls());
+});
+
+gulp.task('check:lcov', false, [], function(cb) {
+  var parse = require('lcov-parse');
+  parse('coverage/lcov.info', function(error, data) {
+    if (!error) {
+      data.forEach(function(obj) {
+        var file = obj['file'];
+        delete obj['file'];
+        gutil.log('Coverage info for', file);
+        gutil.log(JSON.stringify(obj, 2, null));
+      });
+    } else {
+      gutil.log(gutil.colors.red('Error'), error);
+    }
+    cb();
+  });
+});
+
+gulp.task('default', false, ['help']);

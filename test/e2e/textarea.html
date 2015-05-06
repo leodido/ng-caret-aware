@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Angular caret aware elements - TextArea example 01</title>
+  <script src="../../bower_components/angular/angular.js"></script>
+  <script src="../../dist/dev.caretaware.min.js"></script>
+</head>
+<body data-ng-app="app" data-ng-controller="AppController">
+<label for="textarea"><strong>Text area</strong></label><br/>
+<textarea name="textarea" id="textarea" cols="30" rows="10" data-caret-aware="cursor"></textarea>
+<button data-ng-click="printSelection()"><b>print selection</b></button>
+<div>
+  <pre id="selection"></pre>
+</div>
+
+<script type="text/javascript">
+  var app = angular.module('app', ['leodido.caretAware']);
+  app.controller('AppController', function($scope) {
+    var textarea = angular.element(document.querySelector('#textarea'));
+
+    $scope.printSelection = function() {
+      var caretAwareCtrl = textarea.controller('caretAware');
+      var selection = caretAwareCtrl.getSelection();
+      var preEl = angular.element(document.querySelector('#selection'));
+      preEl.text(JSON.stringify(selection));
+    };
+  });
+</script>
+
+</body>
+</html>

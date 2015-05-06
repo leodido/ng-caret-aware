@@ -1,8 +1,11 @@
-exports.config = function(config) {
-  'use strict';
-  config.set({
+'use strict';
+
+var bundle = require('./package.json');
+
+module.exports = function(config) {
+  var cfg = {
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: './',
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -16,8 +19,13 @@ exports.config = function(config) {
       'bower_components/closure-library/closure/goog/base.js',
       'bower_components/closure-library/closure/goog/deps.js',
 
-      'lib/**/*.js',
-      'test/unit/**/*.spec.js'
+      'lib/constants.js',
+      'lib/selection.typedef.js',
+      'lib/caret.controller.js',
+      'lib/caretaware.directive.js',
+      'lib/module.js',
+
+      bundle.directories.unit + '/**/*.spec.js'
     ],
 
     // list of files to exclude
@@ -35,8 +43,11 @@ exports.config = function(config) {
     reporters: ['spec', 'coverage'],
 
     coverageReporter: {
-      type: 'html',
-      dir: 'test/coverage'
+      dir: 'coverage',
+      reporters: [
+        { type: 'lcov', subdir: '.' },
+        { type: 'lcovonly', subdir: '.', file: 'lcov.txt' }
+      ]
     },
 
     // web server port
@@ -54,9 +65,11 @@ exports.config = function(config) {
 
     // start these browsers
     // available browser launchers: https://nprmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS', 'Chrome', 'Firefox'],
+    browsers: ['Chrome', 'Firefox'],
 
     // continuous integration mode: if true, karma captures browsers, runs the tests and exits
     singleRun: true
-  });
+  };
+
+  config.set(cfg);
 };
