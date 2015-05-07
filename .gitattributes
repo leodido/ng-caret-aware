@@ -1,2 +1,3 @@
 example/* linguist-documentation
 *.conf    linguist-documentation
+test/e2e/*.html linguist-documentation
