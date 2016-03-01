@@ -2,7 +2,7 @@
   "name": "ng-caret-aware",
   "version": "0.3.0",
   "description": "AngularJS directive for caret aware elements",
-  "main": "caretaware.min.js",
+  "main": "dist/caretaware.min.js",
   "author": {
     "name": "Leo Di Donato",
     "email": "leodidonato@gmail.com",
