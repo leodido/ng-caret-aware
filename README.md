@@ -175,7 +175,7 @@ This library has been unit tested for Chrome and Firefox.
 
 At the moment coverage is almost complete.
 
-Nevertheless E2E tests are provided for Chrome and Firefox, too.
+Furthermore E2E tests are provided for Chrome and Firefox, too.
 
 See [test](test) directory for details.
 
