@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp'),
+    glob = require('glob'),
     bump = require('gulp-bump'),
     debug = require('gulp-debug'),
     ccompiler = require('gulp-closure-compiler'),
@@ -115,12 +116,11 @@ gulp = gulp = require('gulp-help')(gulp, {
  * prefixes: {dev: string},
  * output: {minified: string, sourcemap: string},
  * externs: string[],
- * sources: *[],
- * release: string
+ * sources: *[]
  * }}
  */
 var settings = {
-  compiler: 'bower_components/closure-compiler/compiler.jar',
+  compiler: glob.sync('bower_components/closure-compiler/*.jar'),
   prefixes: {
     dev: 'dev.'
   },
@@ -136,8 +136,7 @@ var settings = {
   sources: [
     'bower_components/closure-library/closure/goog/base.js',
     bundle.directories.source + '/*.js'
-  ],
-  release: /** @type {string} */ (bundle.directories.release)
+  ]
 };
 
 gulp.task('lint', 'Lint JS source files', [], function() {
@@ -256,16 +255,6 @@ gulp.task('bump', 'Bump version up for a new release', function() {
       .pipe(bump({ type: getLevel() }))
       .pipe(gulp.dest('./'));
 }, levelsHelp);
-
-gulp.task('karma', 'Run karma tests', [], function(done) {
-  karma.start(
-      {
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-      },
-      done
-  );
-});
 
 var stream;
 gulp.task('connect', false, [], function() {

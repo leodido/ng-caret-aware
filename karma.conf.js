@@ -1,6 +1,8 @@
 'use strict';
 
 var bundle = require('./package.json');
+var path = require('path');
+
 
 module.exports = function(config) {
   var cfg = {
@@ -19,13 +21,13 @@ module.exports = function(config) {
       'bower_components/closure-library/closure/goog/base.js',
       'bower_components/closure-library/closure/goog/deps.js',
 
-      'lib/constants.js',
-      'lib/selection.typedef.js',
-      'lib/caret.controller.js',
-      'lib/caretaware.directive.js',
-      'lib/module.js',
+      path.join(bundle.directories.source, 'constants.js'),
+      path.join(bundle.directories.source, 'selection.typedef.js'),
+      path.join(bundle.directories.source, 'caret.controller.js'),
+      path.join(bundle.directories.source, 'caretaware.directive.js'),
+      path.join(bundle.directories.source, 'module.js'),
 
-      bundle.directories.unit + '/**/*.spec.js'
+      path.join(bundle.directories.unit, '**', '*.spec.js')
     ],
 
     // list of files to exclude
