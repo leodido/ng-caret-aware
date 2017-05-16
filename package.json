@@ -27,10 +27,8 @@
     "gulp-help": "^1.3.3",
     "gulp-jsbeautifier": "0.0.5",
     "gulp-json-editor": "^2.2.1",
-    "gulp-protractor": "0.0.12",
     "gulp-rename": "^1.2.2",
     "gulp-util": "~3.0.4",
-    "gulp-webserver": "^0.9.0",
     "http-server": "^0.10.0",
     "jasmine-core": "2.3.0",
     "jasmine-spec-reporter": "^2.1.0",
@@ -46,16 +44,30 @@
     "node.extend": "^1.1.3",
     "phantomjs-prebuilt": "^2.1.14",
     "protractor": "^5.1.1",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "shx": "^0.2.2"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "clean:deps": "shx rm -f node_modules browser_components",
+    "clean:logs": "shx rm -f *.log",
+    "preclean": "npm run clean:logs",
+    "postclean": "npm run clean:deps",
+    "wait:webdriver": "while ! nc -z 127.0.0.1 4444; do sleep 1; done",
+    "clear:webdriver": "fuser -k -n tcp 4444",
+    "wait:server": "while ! nc -z 127.0.0.1 $npm_package_config_server_port; do sleep 1; done",
+    "clear:server": "fuser -k -n tcp $npm_package_config_server_port",
+    "webdriver:up": "webdriver-manager update",
+    "webdriver:go": "webdriver-manager start",
+    "protractor": "protractor $npm_package_config_dir_test/protractor.conf.js",
+
+    "deps": "bower install",
+    "clean": "shx rm -rf $npm_package_config_dir_dist $npm_package_config_dir_coverage",
+    "server": "http-server -p $npm_package_config_server_port .",
     "production": "gulp build --env production --banner",
     "development": "gulp build --env development --banner",
     "compile": "npm run development && npm run production",
-    "test": "karma start karma.conf.js",
-    "e2e": "gulp protractor",
-    "serve": "http-server -p $npm_package_config_server_port"
+    "test": "karma start $npm_package_config_dir_test/karma.conf.js",
+    "e2e": "$npm_package_config_dir_test/e2e.sh"
   },
   "keywords": [
     "caret",
@@ -67,22 +79,22 @@
     "angular",
     "ng",
     "directive",
+    "controller",
     "closure",
     "gulp"
   ],
-  "directories": {
-    "source": "lib",
-    "dist": "dist",
-    "example": "example",
-    "unit": "test/unit",
-    "e2e": "test/e2e"
-  },
-  "server": {
-    "port": 8000
-  },
   "config": {
     "server": {
       "port": 8000
+    },
+    "dir": {
+      "source": "lib",
+      "dist": "dist",
+      "example": "example",
+      "test": "test",
+      "unit": "test/unit",
+      "e2e": "test/e2e",
+      "coverage": "coverage"
     }
   }
 }
