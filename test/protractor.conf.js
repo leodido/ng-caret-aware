@@ -1,22 +1,23 @@
 'use strict';
 
-var bundle = require('./package.json');
+var config = require('../package.json').config;
+var path = require('path');
 
 exports.config = {
-  seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.45.0.jar',
-
-  // capabilities: {
-  //  'browserName': 'firefox'
-  // },
-
-  multiCapabilities: [{
-    'browserName': 'chrome'
-  } , {
-    'browserName': 'firefox'
-  }],
+  multiCapabilities: [
+    {
+      'browserName': 'chrome'
+    },
+    /*
+    {
+      'browserName': 'firefox',
+      'marionette': true
+    }
+    */
+  ],
 
   specs: [
-    bundle.directories.e2e + '/**.scenario.js'
+    path.join(__dirname, '..', config.dir.e2e + '/**.scenario.js')
   ],
 
   framework: 'jasmine2',
@@ -45,7 +46,7 @@ exports.config = {
     ]
   },
 
-  baseUrl: 'http://127.0.0.1:' + bundle.server.port,
+  baseUrl: 'http://127.0.0.1:' + config.server.port,
 
   onPrepare: function() {
     var SpecReporter = require('jasmine-spec-reporter');
@@ -57,9 +58,5 @@ exports.config = {
     browser.getProcessedConfig().then(function(config) {
       browser.name = config.capabilities.browserName;
     });
-
-//    browser.getCapabilities().then(function(cap) {
-//      browser.name = cap.caps_.browserName;
-//    });
   }
 };
